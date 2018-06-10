@@ -1,6 +1,7 @@
 package main
 
 import "net/http"
+import "strings"
 
 type router struct {
 	//키: http method
@@ -10,7 +11,7 @@ type router struct {
 
 func (r *router) HandlerFunc(method, pattern string, h http.HandlerFunc) {
 	// http 메서드로 등록된 맵이 있는지확인
-	m, ok = r.handlers[method]
+	m, ok := r.handlers[method]
 	if !ok {
 		// 등록된 맵이 없으면 새 맵을 생성
 		m = make(map[string]http.HandlerFunc)
@@ -23,16 +24,6 @@ type Hander interface {
 	ServeHTTP(http.ResponseWriter, *http.Request)
 }
 
-func (r *router) ServeHTTP(w http.ResponseWrite, req *http.Request) {
-	if m, ok := r.handlers[req.Method]; ok {
-		if h, ok := m[req.URL.PATH]; ok {
-			// 요청 URL 핸들러 수행
-			h(w, req)
-			return
-		}
-	}
-	http.NotFound(w, req)
-}
 
 func match(pattern, path string) (bool, map[string]string) {
 	if pattern == path {
@@ -45,14 +36,14 @@ func match(pattern, path string) (bool, map[string]string) {
 
 	// 패턴과 패스의 항목 수가 맞지 않으면 바로 false 반환
 	if len(patterns) != len(paths) {
-		return flase, nil
+		return false, nil
 	}
 
 	params := make(map[string]string)
 
 	// "/"로 구분된 패턴/ 패스의 각 문자열을 하나씩 비교
 
-	for i := 0; i < len(paterns); i++ {
+	for i := 0; i < len(patterns); i++ {
 		switch {
 		case patterns[i] == paths[i]:
 			// 문자열이 일치하면 루프 실행
@@ -73,11 +64,11 @@ func match(pattern, path string) (bool, map[string]string) {
 
 func (r *router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	// http 메서드에 맞는 모든 handers를 반복해서 요청 URL에 해당하는 Handler 찾음
-
 	for pattern, handler := range r.handlers[req.Method] {
-		if ok, _ := match(pattern, req.URL.PATH); ok {
+		if ok, _ := match(pattern, req.URL.Path); ok {
 			// 요청 URL에 해당하는 handler 수행
 			handler(w, req)
+			return
 		}
 	}
 

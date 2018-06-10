@@ -3,17 +3,22 @@ package main
 import (
 	"fmt"
 	"net/http"
-) 
+)
 
 func main() {
-	// 루트 경로 함수 지정
-	http.HandleFunc("/" ,func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w,"welcome!")
+	r := &router{make(map[string]map[string]http.HandlerFunc)}
+
+	r.HandleFunc("GET", "/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "welcome!")
 	})
 
-	http.HandleFunc("/about", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w,"about")
+	r.HandleFunc("GET", "/about", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "about")
 	})
 
-	http.ListenAndServe(":8080",nil)
+	r.HandleFunc("GET", "/users/:id", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "retrieve user")
+	})
+
+	http.ListenAndServe(":8080", nil)
 }

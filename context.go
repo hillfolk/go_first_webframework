@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -12,4 +11,6 @@ type Context struct {
 	Request *http.Request
 }
 
-type HanderFunc func(*Context)
+type HandlerFunc func(*Context)
+
+

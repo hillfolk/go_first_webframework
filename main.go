@@ -6,19 +6,29 @@ import (
 )
 
 func main() {
-	r := &router{make(map[string]map[string]http.HandlerFunc)}
+	r := &router{make(map[string]map[string]HandlerFunc)}
 
-	r.HandlerFunc("GET", "/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "welcome!")
+	r.HandlerFunc("GET", "/", func(c *Context) {
+		fmt.Fprintf(c.ResponseWriter, "welcome!")
 	})
 
-	r.HandlerFunc("GET", "/about", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "about")
+	r.HandlerFunc("GET", "/about", func(c *Context) {
+		fmt.Fprintf(c.ResponseWriter, "about")
 	})
 
-	r.HandlerFunc("GET", "/users/:id", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "retrieve user")
+	r.HandlerFunc("GET", "/users/:id", func(c *Context) {
+		fmt.Fprintf(c.ResponseWriter, "retrieve user %v\n",c.Params["id"])
 	})
+
+	r.HandlerFunc("GET", "/users/:user_id/addresses/:address_id", func(c *Context) {
+		fmt.Fprintf(c.ResponseWriter, "retrieve  %v's address %v\n",c.Params["user_id"],c.Params["address_id"])
+	})
+	r.HandlerFunc("GET", "/users", func(c *Context) {
+		fmt.Fprintf(c.ResponseWriter, "create user\n")
+	})
+	
+
+	
 
 	http.ListenAndServe(":8080", r)
 }

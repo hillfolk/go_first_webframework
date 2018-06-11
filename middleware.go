@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
+	"path"
 )
 
 type Middelware func(next HandlerFunc) HandlerFunc
@@ -94,8 +96,8 @@ func staticHandler(next HandlerFunc) HandlerFunc {
 		}
 
 		if fi.IsDir() {
-			if !strings.HasSuffix(c.ResponseWriter, c.Request, c.Request.URL.Path, "/") {
-				http.Redirect(c.ResponseWriter, c.Request, c.Request.URL.Path+"/", http.StatusFound)
+			if !strings.HasSuffix( c.Request.URL.Path, "/") {
+			http.Redirect(c.ResponseWriter, c.Request, c.Request.URL.Path+"/", http.StatusFound)
 
 				return
 
@@ -103,7 +105,7 @@ func staticHandler(next HandlerFunc) HandlerFunc {
 
 			file = path.Join(file, indexFile)
 
-			f, err = dif.Open(file)
+			f, err = dir.Open(file)
 			if err != nil {
 				next(c)
 				return

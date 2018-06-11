@@ -2,10 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
-	"fmt"
 )
 
 type Middelware func(next HandlerFunc) HandlerFunc
@@ -43,7 +43,7 @@ func recoverHandler(next HandlerFunc) HandlerFunc {
 func parseFormHandler(next HandlerFunc) HandlerFunc {
 	return func(c *Context) {
 		c.Request.ParseForm()
-		
+
 		fmt.Println(c.Request.PostForm)
 
 		for k, v := range c.Request.PostForm {
@@ -65,4 +65,59 @@ func parseJsonBodyHandler(next HandlerFunc) HandlerFunc {
 		}
 		next(c)
 	}
+}
+
+func staticHandler(next HandlerFunc) HandlerFunc {
+	var (
+		dir       = http.Dir(".")
+		indexFile = "index.html"
+	)
+
+	return func(c *Context) {
+		if c.Request.Method != "GET" && c.Request.Method != "HEAD" {
+			next(c)
+			return
+		}
+		file := c.Request.URL.Path
+		//URL 경로에 해당하는 파일 열기 시도
+		f, err := dir.Open(file)
+		if err != nil {
+			next(c)
+			return
+		}
+		defer f.Close()
+
+		fi, err := f.Stat()
+		if err != nil {
+			next(c)
+			return
+		}
+
+		if fi.IsDir() {
+			if !strings.HasSuffix(c.ResponseWriter, c.Request, c.Request.URL.Path, "/") {
+				http.Redirect(c.ResponseWriter, c.Request, c.Request.URL.Path+"/", http.StatusFound)
+
+				return
+
+			}
+
+			file = path.Join(file, indexFile)
+
+			f, err = dif.Open(file)
+			if err != nil {
+				next(c)
+				return
+			}
+
+			fi, err = f.Stat()
+			if err != nil || fi.IsDir() {
+				next(c)
+				return
+			}
+
+		}
+
+		http.ServeContent(c.ResponseWriter, c.Request, file, fi.ModTime(), f)
+	}
+
 }

@@ -24,7 +24,6 @@ type Hander interface {
 	ServeHTTP(http.ResponseWriter, *http.Request)
 }
 
-
 func match(pattern, path string) (bool, map[string]string) {
 	if pattern == path {
 		return true, nil
@@ -68,15 +67,15 @@ func (r *router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		if ok, params := match(pattern, req.URL.Path); ok {
 			//Context 생성
 			c := Context{
-				Params: make(map[string]interface{}),
-				ResponseWriter:w,
-				Request:req,
+				Params:         make(map[string]interface{}),
+				ResponseWriter: w,
+				Request:        req,
 			}
 
-			for k,v := range params {
+			for k, v := range params {
 				c.Params[k] = v
 			}
-			
+
 			// 요청 URL에 해당하는 handler 수행
 			handler(&c)
 			return

@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-type Middelware func(next HandlerFunc) HandlerFunc
+type Middleware func(next HandlerFunc) HandlerFunc
 
 func logHandler(next HandlerFunc) HandlerFunc {
 	return func(c *Context) {

@@ -20,6 +20,20 @@ func (r *router) HandlerFunc(method, pattern string, h HandlerFunc) {
 	m[pattern] = h
 }
 
+func (r *router) handler() HandlerFunc {
+	return func(c *Context) {
+		for pattern, handler := range r.handlers[c.Request.Method]{
+			if ok, params := match(pattern, c.Request.URL.Path); ok{
+				for k,v := range params{
+					c.Params[k] = v
+				}
+				handler(c)
+				return
+			}
+		}
+	}
+}
+
 type Hander interface {
 	ServeHTTP(http.ResponseWriter, *http.Request)
 }

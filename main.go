@@ -20,11 +20,14 @@ func main() {
 		if c.Params["id"] == "0" {
 			panic("id is zero")
 		}
-		fmt.Fprintf(c.ResponseWriter, "retrieve user %v\n", c.Params["id"])
-	})))
+		u := User{Id:c.Params["id"].(string)}
+		c.RanderXml(u)
+	})
 
 	s.HandlerFunc("GET", "/users/:user_id/addresses/:address_id", func(c *Context) {
 		fmt.Fprintf(c.ResponseWriter, "retrieve  %v's address %v\n", c.Params["user_id"], c.Params["address_id"])
+		u := User{Id:c.Params["user_id"].(string),cParams["address_id"].(string)}
+		c.RanderJson(u)
 	})
 
 	s.HandlerFunc("POST", "/users", logHandler(recoverHandler(parseFormHandler(parseJsonBodyHandler(func(c *Context) {

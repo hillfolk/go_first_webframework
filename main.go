@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 )
 
@@ -22,7 +23,7 @@ func main() {
 		}
 		u := User{Id:c.Params["id"].(string)}
 		c.RanderXml(u)
-	})
+	})))
 
 	s.HandlerFunc("GET", "/users/:user_id/addresses/:address_id", func(c *Context) {
 		fmt.Fprintf(c.ResponseWriter, "retrieve  %v's address %v\n", c.Params["user_id"], c.Params["address_id"])

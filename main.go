@@ -9,7 +9,7 @@ func main() {
 	s := NewServer()
 
 	s.HandlerFunc("GET", "/", func(c *Context) {
-		fmt.Fprintf(c.ResponseWriter, "welcome!")
+		c.RenderTemplate("/public/index.html",map[string]interface{}{"time":time.Now()})
 	})
 
 	s.HandlerFunc("GET", "/about", func(c *Context) {

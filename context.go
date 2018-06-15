@@ -43,6 +43,18 @@ func (c *Context) RenderErr(code int, err error){
 	}
 }
 
+var tamplates =map[string]*template.Template{}
+
+func (c *Context) RenderTemplate(path string,v interface{}) {
+	t, ok := templates[path]
+	if !ok {
+		t = template.Must(tempate.ParseFiles(filepath,Join(".",path)))
+		templates[path] = t
+	}
+
+	t.Execute(c.ResponseWriter,v)
+}
+
 
 
 type HandlerFunc func(*Context)

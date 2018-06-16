@@ -6,6 +6,12 @@ import (
 
 )
 
+type User struct {
+	Id        string
+	AddressId string
+}
+
+
 func main() {
 	s := NewServer()
 
@@ -22,13 +28,13 @@ func main() {
 			panic("id is zero")
 		}
 		u := User{Id:c.Params["id"].(string)}
-		c.RanderXml(u)
+		c.RenderXml(u)
 	})))
 
 	s.HandlerFunc("GET", "/users/:user_id/addresses/:address_id", func(c *Context) {
 		fmt.Fprintf(c.ResponseWriter, "retrieve  %v's address %v\n", c.Params["user_id"], c.Params["address_id"])
-		u := User{Id:c.Params["user_id"].(string),cParams["address_id"].(string)}
-		c.RanderJson(u)
+		u := User{Id:c.Params["user_id"].(string),AddressId:c.Params["address_id"].(string)}
+		c.RenderJson(u)
 	})
 
 	s.HandlerFunc("POST", "/users", logHandler(recoverHandler(parseFormHandler(parseJsonBodyHandler(func(c *Context) {

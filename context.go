@@ -47,8 +47,6 @@ func (c *Context) RenderErr(code int, err error) {
 	}
 }
 
-
-
 func (c *Context) RenderTemplate(path string, v interface{}) {
 	t, ok := templates[path]
 	if !ok {

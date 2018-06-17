@@ -1,1 +1,20 @@
-Go 웹 개발 철저 입문 
+* Go WebFramework (Go 언어 웹 프로그래밍 철저 입문 예제)
+
+** main.go
+   메인 실행 파일
+
+** router.go
+   URL 라우팅 
+
+** server.go
+   서버 객체 
+
+** middleware.go
+   기능 미들웨어
+
+** context.go 
+   서버 상태 컨텍스트 
+
+** session.go
+   로그인 세션 
+

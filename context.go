@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"encoding/xml"
 	"path/filepath"
 	"text/template"
 )
@@ -11,7 +12,6 @@ var templates = map[string]*template.Template{}
 
 type Context struct {
 	Params map[string]interface{}
-
 	ResponseWriter http.ResponseWriter
 	Request        *http.Request
 }
@@ -20,7 +20,6 @@ func (c *Context) RenderJson(v interface{}) {
 
 	c.ResponseWriter.WriteHeader(http.StatusOK)
 	c.ResponseWriter.Header().Set("Content-Type", "application/json;charset=utf8")
-
 	if err := json.NewEncoder(c.ResponseWriter).Encode(v); err != nil {
 		c.RenderErr(http.StatusInternalServerError, err)
 	}
@@ -28,10 +27,8 @@ func (c *Context) RenderJson(v interface{}) {
 
 func (c *Context) RenderXml(v interface{}) {
 	c.ResponseWriter.WriteHeader(http.StatusOK)
-
 	c.ResponseWriter.Header().Set("Content-Type", "application/xml;charset=utf8")
-
-	if err := json.NewEncoder(c.ResponseWriter).Encode(v); err != nil {
+	if err := xml.NewEncoder(c.ResponseWriter).Encode(v); err != nil {
 		c.RenderErr(http.StatusInternalServerError, err)
 	}
 }
@@ -53,8 +50,11 @@ func (c *Context) RenderTemplate(path string, v interface{}) {
 		t = template.Must(template.ParseFiles(filepath.Join(".", path)))
 		templates[path] = t
 	}
-
 	t.Execute(c.ResponseWriter, v)
 }
 
+
+func (c *Context) Redirect(url string){
+	http.Redirect(c.ResponseWriter, c.Request, url, http.StatusMovedPermanently)
+}
 type HandlerFunc func(*Context)

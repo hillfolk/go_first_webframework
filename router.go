@@ -9,7 +9,7 @@ type router struct {
 	handlers map[string]map[string]HandlerFunc
 }
 
-func (r *router) HandlerFunc(method, pattern string, h HandlerFunc) {
+func (r *router) HandleFunc(method, pattern string, h HandlerFunc) {
 	// http 메서드로 등록된 맵이 있는지확인
 	m, ok := r.handlers[method]
 	if !ok {
@@ -22,20 +22,18 @@ func (r *router) HandlerFunc(method, pattern string, h HandlerFunc) {
 
 func (r *router) handler() HandlerFunc {
 	return func(c *Context) {
-		for pattern, handler := range r.handlers[c.Request.Method]{
-			if ok, params := match(pattern, c.Request.URL.Path); ok{
-				for k,v := range params{
+		for pattern, handler := range r.handlers[c.Request.Method] {
+			if ok, params := match(pattern, c.Request.URL.Path); ok {
+				for k, v := range params {
 					c.Params[k] = v
 				}
 				handler(c)
 				return
 			}
 		}
+		http.NotFound(c.ResponseWriter, c.Request)
+		return
 	}
-}
-
-type Hander interface {
-	ServeHTTP(http.ResponseWriter, *http.Request)
 }
 
 func match(pattern, path string) (bool, map[string]string) {
@@ -75,27 +73,3 @@ func match(pattern, path string) (bool, map[string]string) {
 
 }
 
-func (r *router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	// http 메서드에 맞는 모든 handers를 반복해서 요청 URL에 해당하는 Handler 찾음
-	for pattern, handler := range r.handlers[req.Method] {
-		if ok, params := match(pattern, req.URL.Path); ok {
-			//Context 생성
-			c := Context{
-				Params:         make(map[string]interface{}),
-				ResponseWriter: w,
-				Request:        req,
-			}
-
-			for k, v := range params {
-				c.Params[k] = v
-			}
-
-			// 요청 URL에 해당하는 handler 수행
-			handler(&c)
-			return
-		}
-	}
-
-	http.NotFound(w, req)
-	return
-}

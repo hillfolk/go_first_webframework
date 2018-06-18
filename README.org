@@ -1,20 +1,31 @@
 * Go WebFramework (Go 언어 웹 프로그래밍 철저 입문 예제)
 
 ** main.go
-   메인 실행 파일
+   - 메인 실행 파일
+   - 서버 생성 및 실행
 
 ** router.go
-   URL 라우팅 
+   - URL 라우팅
+   - handler 파라메터 처리
+   - HandleFunc 구현
 
 ** server.go
-   서버 객체 
+   - 서버 객체 구현
+   - 미들웨어 Use 구현
 
 ** middleware.go
-   기능 미들웨어
+   - 기능 미들웨어
+   - 사용자 정의 미들웨어 추가
+   - 로그 및 Form 처리 Json 처리 등과 같은 특수 기능 미들웨어 구현
 
 ** context.go 
-   서버 상태 컨텍스트 
+   - 서버 상태 컨텍스트
+   - 클라이언트 접속시 마다 생성 되며 Request 및 Response 관리
+   - Render 관리
+
+
 
 ** session.go
-   로그인 세션 
+   - 로그인 세션
+   - 사용자 접속 관리
 

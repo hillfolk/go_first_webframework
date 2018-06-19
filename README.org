@@ -23,9 +23,3 @@
    - 클라이언트 접속시 마다 생성 되며 Request 및 Response 관리
    - Render 관리
 
-
-
-** session.go
-   - 로그인 세션
-   - 사용자 접속 관리
-
